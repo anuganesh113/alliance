@@ -27,30 +27,42 @@ const Home = () => {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, [mouseX, mouseY]);
 
-    const solutions = [
+    const services = [
         {
-            title: "Smart Diagnostic Ecosystems",
-            description: "Advanced imaging workstations integrated with AI-driven analytics for precise, earlier detection.",
-            icon: Microscope,
-            link: "/products/diagnostics"
+            title: "Medical Equipment Supply",
+            description: "End-to-end procurement and installation of accessible, high-performance diagnostic and therapeutic technology.",
+            icon: Stethoscope,
+            link: "/services/medical-equipment"
         },
         {
-            title: "Critical Care Infrastructure",
-            description: "End-to-end ICU and OT setups featuring interconnected monitoring systems and life-support units.",
-            icon: Activity,
+            title: "Healthcare IT Solutions",
+            description: "Digital transformation infrastructure including HIS, PACS, and interoperable data ecosystems for seamless clinical workflows.",
+            icon: Cpu,
+            link: "/services/healthcare-it"
+        },
+        {
+            title: "Hospital Infrastructure",
+            description: "Turnkey project management for clinical facilities, from architectural consulting to specialized medical gas pipeline systems.",
+            icon: Building2,
             link: "/services/infrastructure"
         },
         {
-            title: "Enterprise IT Platforms",
-            description: "Unified PACS, RIS, and HMIS solutions designed to streamline hospital workflows and data interoperability.",
-            icon: Network,
-            link: "/services/digital-health"
+            title: "Diagnostic Systems",
+            description: "Next-generation laboratory and imaging command centers designed for precision accuracy and high-throughput efficiency.",
+            icon: Microscope,
+            link: "/services/diagnostics"
         },
         {
-            title: "Turnkey Project Execution",
-            description: "From architectural planning to equipment commissioning, we deliver fully operational medical facilities.",
-            icon: Building2,
-            link: "/services/projects"
+            title: "Maintenance & Support",
+            description: "Comprehensive lifecycle management with 24/7 technical rapid-response teams and preventive maintenance protocols.",
+            icon: Wrench,
+            link: "/services/support"
+        },
+        {
+            title: "Strategic Consulting",
+            description: "Operational optimization and technology capability capability assessments for maximizing institutional ROI.",
+            icon: Activity,
+            link: "/services/consulting"
         }
     ];
 
@@ -291,21 +303,21 @@ const Home = () => {
 
             <TrustIndicators />
 
-            {/* Featured Solutions Section */}
+            {/* Services Section */}
             <section className="py-32 bg-slate-50 relative overflow-hidden">
                 {/* Background Decoration */}
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-500/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/2" />
 
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <SectionTitle
-                        subtitle="Impactful Innovation"
-                        title="Featured Solutions & Technologies"
+                        subtitle="Holistic Solutions"
+                        title="Our Core Services"
                         className="mb-16"
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-                        {solutions.map((solution, index) => (
-                            <ServiceCard key={index} {...solution} index={index} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                        {services.map((service, index) => (
+                            <ServiceCard key={index} {...service} index={index} />
                         ))}
                     </div>
 
@@ -313,7 +325,7 @@ const Home = () => {
                         className="mt-16 text-center"
                     >
                         <Link to="/services" className="inline-flex items-center gap-2 border-b-2 border-accent pb-1 text-primary hover:text-accent transition-all text-lg group">
-                            Explore All Capabilities
+                            Explore All Services
                             <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>

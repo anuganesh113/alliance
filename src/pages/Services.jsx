@@ -13,7 +13,12 @@ import {
     Globe,
     Users,
     Clock,
-    Award
+    Award,
+    Landmark,
+    ClipboardList, // Added
+    PenTool, // Added
+    Settings, // Added
+    Rocket // Added
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SectionTitle from '../components/SectionTitle';
@@ -65,17 +70,17 @@ const Services = () => {
     ];
 
     const industries = [
-        { title: 'Hospitals & Trauma Centers', desc: 'Integrated critical care and surgical solutions.' },
-        { title: 'Diagnostic Laboratories', desc: 'High-throughput automation and precision sensing.' },
-        { title: 'Specialty Clinics', desc: 'Compact, efficient, and specialized medical modalities.' },
-        { title: 'Government Institutions', desc: 'Scalable public health infrastructure and reliable supply chains.' }
+        { title: 'Hospitals & Trauma Centers', icon: Building2, desc: 'Integrated critical care and surgical solutions.' },
+        { title: 'Diagnostic Laboratories', icon: Microscope, desc: 'High-throughput automation and precision sensing.' },
+        { title: 'Specialty Clinics', icon: Stethoscope, desc: 'Compact, efficient, and specialized medical modalities.' },
+        { title: 'Government Institutions', icon: Landmark, desc: 'Scalable public health infrastructure and reliable supply chains.' }
     ];
 
     const processSteps = [
-        { num: '01', title: 'Assessment', desc: 'Deep-dive analysis of clinical requirements.' },
-        { num: '02', title: 'Solution Design', desc: 'Architecting the optimal technology mix.' },
-        { num: '03', title: 'Implementation', desc: 'Precision installation and system integration.' },
-        { num: '04', title: 'Enablement', desc: 'Comprehensive training and workflow stabilization.' }
+        { num: '01', title: 'Assessment', icon: ClipboardList, desc: 'Deep-dive analysis of clinical requirements.' },
+        { num: '02', title: 'Solution Design', icon: PenTool, desc: 'Architecting the optimal technology mix.' },
+        { num: '03', title: 'Implementation', icon: Settings, desc: 'Precision installation and system integration.' },
+        { num: '04', title: 'Enablement', icon: Rocket, desc: 'Comprehensive training and workflow stabilization.' }
     ];
 
     return (
@@ -172,7 +177,7 @@ const Services = () => {
                             className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8"
                         >
                             Comprehensive <br />
-                            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-slate-400 z-10">
+                            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-slate-500 z-10">
                                 Healthcare Technology
                                 {/* Underline Glow */}
                                 <motion.div
@@ -182,7 +187,7 @@ const Services = () => {
                                     className="absolute -bottom-2 left-0 h-[6px] bg-accent/20 blur-sm rounded-full"
                                 />
                             </span> <br />
-                            <span className="text-stroke-white text-transparent opacity-20">Services.</span>
+                            <span className="text-white text-transparent opacity-40">Services.</span>
                         </motion.h1>
 
                         <motion.div
@@ -283,52 +288,110 @@ const Services = () => {
                 </div>
             </section>
 
-            {/* 4. Industry Solutions */}
-            <section className="py-24 bg-[#020617] text-white overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 skew-x-12 pointer-events-none" />
+            {/* 4. Industry Solutions - Enhanced */}
+            <section className="py-24 bg-[#0B0F19] text-white relative overflow-hidden group/section">
+                {/* Background FX */}
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
+                    <div className="absolute -top-[30%] -right-[30%] w-[1000px] h-[1000px] bg-accent/5 rounded-full blur-[150px] mix-blend-screen opacity-40 group-hover/section:opacity-60 transition-opacity duration-1000" />
+                    <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-[#020617] to-transparent opacity-80" />
+                </div>
+
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                        <div className="max-w-2xl">
-                            <span className="text-accent font-bold uppercase tracking-widest text-xs mb-2 block">Sectors We Serve</span>
-                            <h2 className="text-4xl font-black tracking-tight">Tailored for Every Clinical Scale.</h2>
-                        </div>
-                        <Link to="/contact" className="btn btn-primary px-8 py-3 rounded-full">Explore Sector Expertise</Link>
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="max-w-2xl"
+                        >
+                            <span className="text-accent font-bold uppercase tracking-widest text-xs mb-3 block">Sectors We Serve</span>
+                            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+                                Tailored for Every <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">Clinical Scale.</span>
+                            </h2>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                        >
+                            <Link to="/contact" className="btn btn-primary px-8 py-4 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] border border-white/5 hover:border-accent/40 transition-all hover:shadow-[0_0_30px_rgba(0,135,68,0.2)]">Explore Sector Expertise</Link>
+                        </motion.div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {industries.map((ind, i) => (
-                            <div key={i} className="bg-white/5 border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-colors backdrop-blur-sm group">
-                                <div className="mb-6 opacity-30 group-hover:opacity-100 transition-opacity">
-                                    <Building2 size={32} />
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="group relative p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 backdrop-blur-sm overflow-hidden hover:bg-white/[0.06] hover:border-accent/20 transition-all duration-500 hover:-translate-y-2"
+                            >
+                                {/* Hover Glow */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-accent/0 via-accent/0 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                <div className="relative z-10">
+                                    <div className="mb-8 inline-flex p-4 rounded-2xl bg-white/5 text-slate-300 group-hover:text-accent group-hover:bg-accent/10 transition-all duration-300 shadow-inner">
+                                        <ind.icon size={32} strokeWidth={1.5} />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3 text-slate-100 group-hover:text-white transition-colors">{ind.title}</h3>
+                                    <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{ind.desc}</p>
+
+                                    <div className="mt-8 flex items-center gap-2 text-xs font-bold text-accent opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                        <span>VIEW SOLUTIONS</span>
+                                        <ArrowRight size={12} />
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-bold mb-3">{ind.title}</h3>
-                                <p className="text-slate-400 text-sm">{ind.desc}</p>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* 5. Service Delivery Flow */}
-            <section className="py-24 bg-white">
-                <div className="container mx-auto px-4">
+            {/* 5. Service Delivery Flow - Enhanced */}
+            <section className="py-24 bg-slate-50 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none" />
+                <div className="container mx-auto px-4 relative z-10">
                     <SectionTitle title="The Alliance Engagement Model" subtitle="How We Deliver" />
 
-                    <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                    <div className="mt-20 relative">
                         {/* Connecting Line (Desktop) */}
-                        <div className="absolute top-12 left-0 w-full h-0.5 bg-slate-100 hidden md:block" />
+                        <div className="absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-slate-200 via-primary/20 to-slate-200 -translate-y-1/2 hidden md:block rounded-full" />
 
-                        {processSteps.map((step, s) => (
-                            <div key={s} className="relative pt-8">
-                                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs relative z-10 border-4 border-white mb-6 shadow-lg mx-auto md:mx-0">
-                                    {step.num}
-                                </div>
-                                <h3 className="text-xl font-bold text-primary mb-2 text-center md:text-left">{step.title}</h3>
-                                <p className="text-slate-500 text-sm text-center md:text-left leading-relaxed max-w-xs mx-auto md:mx-0">
-                                    {step.desc}
-                                </p>
-                            </div>
-                        ))}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                            {processSteps.map((step, s) => (
+                                <motion.div
+                                    key={s}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: s * 0.2 }}
+                                    className="relative group"
+                                >
+                                    <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 relative z-10 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group-hover:border-accent/30">
+                                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-2xl bg-white border-4 border-slate-50 shadow-sm flex items-center justify-center font-black text-slate-300 text-sm group-hover:bg-accent group-hover:text-white group-hover:border-accent/20 transition-all duration-500 z-20">
+                                            {step.num}
+                                        </div>
+
+                                        <div className="mt-6 flex flex-col items-center text-center">
+                                            <div className="mb-4 text-primary bg-primary/5 p-4 rounded-full group-hover:bg-accent/10 group-hover:text-accent transition-colors duration-500">
+                                                <step.icon size={28} />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-primary mb-3">{step.title}</h3>
+                                            <p className="text-slate-500 text-sm leading-relaxed">
+                                                {step.desc}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Connector Dot for Mobile */}
+                                    <div className="md:hidden w-1 h-8 bg-slate-200 mx-auto my-4" />
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
