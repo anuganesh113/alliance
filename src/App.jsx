@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Layout from './layouts/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -18,24 +19,27 @@ const NotFound = () => <div className="py-32 text-center text-primary text-2xl f
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="services" element={<Services />} />
-        <Route path="services/:serviceId" element={<ServiceDetail />} />
-        <Route path="products" element={<Products />} />
-        <Route path="products/:productId" element={<ProductDetail />} />
-        <Route path="industries" element={<Industries />} />
-        <Route path="why-us" element={<WhyChooseUs />} />
-        <Route path="case-studies" element={<CaseStudies />} />
-        <Route path="certifications" element={<Certifications />} />
-        <Route path="blog" element={<Blog />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="get-quote" element={<GetQuote />} />
-        <Route path="*" element={<NotFound />} />
-      </Route>
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="about" element={<About />} />
+          <Route path="services" element={<Services />} />
+          <Route path="services/:serviceId" element={<ServiceDetail />} />
+          <Route path="products" element={<Products />} />
+          <Route path="products/:productId" element={<ProductDetail />} />
+          <Route path="industries" element={<Industries />} />
+          <Route path="why-us" element={<WhyChooseUs />} />
+          <Route path="case-studies" element={<CaseStudies />} />
+          <Route path="certifications" element={<Certifications />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="get-quote" element={<GetQuote />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 

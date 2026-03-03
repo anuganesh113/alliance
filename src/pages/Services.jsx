@@ -86,7 +86,7 @@ const Services = () => {
     return (
         <div className="flex flex-col font-sans">
             {/* 1. Premium Hero Section - Level 2 Refinement */}
-            <section className="relative min-h-[85vh] flex items-center bg-[#020617] text-white overflow-hidden py-24">
+            <section className="relative min-h-[85vh] flex items-center bg-[#020617] text-white overflow-hidden py-16 md:py-24">
                 {/* Layer 1: Base Noise & Grid */}
                 <div className="absolute inset-0 z-0 pointer-events-none">
                     <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay" />
@@ -102,7 +102,7 @@ const Services = () => {
                             rotate: [0, 90, 0]
                         }}
                         transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] mix-blend-screen"
+                        className="absolute -top-[10%] -right-[10%] md:-top-[20%] w-[400px] h-[400px] md:w-[800px] md:h-[800px] bg-primary/20 rounded-full blur-[80px] md:blur-[120px] mix-blend-screen"
                     />
                     <motion.div
                         animate={{
@@ -111,7 +111,7 @@ const Services = () => {
                             rotate: [0, -60, 0]
                         }}
                         transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                        className="absolute top-[40%] -left-[10%] w-[600px] h-[600px] bg-accent/15 rounded-full blur-[100px] mix-blend-screen"
+                        className="absolute top-[40%] -left-[10%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-accent/15 rounded-full blur-[70px] md:blur-[100px] mix-blend-screen"
                     />
                 </div>
 
@@ -132,9 +132,9 @@ const Services = () => {
                 {/* Floating Service Nodes - 3D Effect */}
                 <div className="absolute inset-0 z-10 pointer-events-none">
                     {[
-                        { icon: Stethoscope, top: '20%', right: '15%', size: 16, delay: 0, color: 'text-accent' },
-                        { icon: Cpu, bottom: '25%', right: '25%', size: 20, delay: 2, color: 'text-blue-400' },
-                        { icon: Building2, top: '30%', left: '10%', size: 12, delay: 4, color: 'text-purple-400' },
+                        { icon: Stethoscope, top: '15%', right: '10%', size: 12, delay: 0, color: 'text-accent', hideMobile: true },
+                        { icon: Cpu, bottom: '20%', right: '20%', size: 16, delay: 2, color: 'text-blue-400', hideMobile: false },
+                        { icon: Building2, top: '25%', left: '5%', size: 10, delay: 4, color: 'text-purple-400', hideMobile: true },
                     ].map((node, i) => (
                         <motion.div
                             key={i}
@@ -144,7 +144,7 @@ const Services = () => {
                                 opacity: [0.4, 0.8, 0.4]
                             }}
                             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: node.delay }}
-                            className="absolute bg-white/5 backdrop-blur-md border border-white/10 rounded-full flex items-center justify-center shadow-2xl"
+                            className={`absolute bg-white/5 backdrop-blur-md border border-white/10 rounded-full flex items-center justify-center shadow-2xl ${node.hideMobile ? 'hidden md:flex' : 'flex'}`}
                             style={{
                                 top: node.top,
                                 right: node.right,
@@ -154,7 +154,7 @@ const Services = () => {
                                 height: `${node.size * 4}px`
                             }}
                         >
-                            <node.icon size={node.size * 1.5} className={`${node.color} opacity-80`} />
+                            <node.icon className={`${node.color} opacity-80`} style={{ width: '60%', height: '60%' }} />
                         </motion.div>
                     ))}
                 </div>
@@ -174,9 +174,9 @@ const Services = () => {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8"
+                            className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter leading-[1] md:leading-[0.9] mb-8"
                         >
-                            Comprehensive <br />
+                            Comprehensive <br className="hidden md:block" />
                             <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-slate-500 z-10">
                                 Healthcare Technology
                                 {/* Underline Glow */}
@@ -186,7 +186,7 @@ const Services = () => {
                                     transition={{ delay: 0.5, duration: 1 }}
                                     className="absolute -bottom-2 left-0 h-[6px] bg-accent/20 blur-sm rounded-full"
                                 />
-                            </span> <br />
+                            </span> <br className="hidden md:block" />
                             <span className="text-white text-transparent opacity-40">Services.</span>
                         </motion.h1>
 
@@ -197,7 +197,7 @@ const Services = () => {
                             className="relative max-w-2xl"
                         >
                             <div className="absolute -inset-4 bg-white/5 blur-2xl rounded-3xl -z-10" />
-                            <p className="text-xl md:text-2xl text-slate-300 leading-relaxed font-light mb-12 p-2">
+                            <p className="text-lg md:text-2xl text-slate-300 leading-relaxed font-light mb-12 p-2">
                                 We empower medical institutions with end-to-end technology infrastructure, from procurement and installation to lifecycle maintenance and digital transformation.
                             </p>
                         </motion.div>
@@ -206,12 +206,12 @@ const Services = () => {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="flex flex-wrap gap-4"
+                            className="flex flex-col sm:flex-row gap-4"
                         >
-                            <Link to="/contact" className="btn btn-primary px-10 py-5 rounded-2xl shadow-[0_0_40px_-10px_rgba(0,135,68,0.4)] hover:shadow-[0_0_60px_-10px_rgba(0,135,68,0.6)] hover:scale-105 transition-all text-lg flex items-center gap-3 group">
+                            <Link to="/contact" className="btn btn-primary px-8 md:px-10 py-4 md:py-5 rounded-2xl shadow-[0_0_40px_-10px_rgba(0,135,68,0.4)] hover:shadow-[0_0_60px_-10px_rgba(0,135,68,0.6)] hover:scale-105 transition-all text-base md:text-lg flex items-center justify-center gap-3 group">
                                 Request Consultation <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                             </Link>
-                            <Link to="#offerings" className="px-10 py-5 rounded-2xl border border-white/10 hover:bg-white/5 transition-colors font-bold flex items-center gap-2 text-lg text-white">
+                            <Link to="#offerings" className="px-8 md:px-10 py-4 md:py-5 rounded-2xl border border-white/10 hover:bg-white/5 transition-colors font-bold flex items-center justify-center gap-2 text-base md:text-lg text-white">
                                 Explore Capabilities <ArrowRight size={18} />
                             </Link>
                         </motion.div>

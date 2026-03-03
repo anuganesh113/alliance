@@ -1,307 +1,283 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, ShieldCheck, CheckCircle2, Zap, Activity, Microscope, Settings, Wrench, Download, ChevronRight, Building2 } from 'lucide-react';
+import {
+    Search,
+    ChevronRight,
+    ArrowRight,
+    Download,
+    Link as LinkIcon,
+    ChevronLeft,
+    ChevronDown,
+    Activity,
+    FileText
+} from 'lucide-react';
+import criticalCareImg from '../assets/critical-care.webp';
 
 const ProductDetail = () => {
     const { productId } = useParams();
+    const [activeTab, setActiveTab] = useState('Description');
+    const [mainImage, setMainImage] = useState(null);
+    const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
+    const [isZoomed, setIsZoomed] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [productId]);
 
-    // Mock data for the specific product 
-    
+    // Simplified mock data based on reference image
     const product = {
-        name: "Alliance MR-3T High-Field Scanner",
-        category: "Diagnostic Equipment",
-        tag: "Advanced Series",
-        shortDesc: "Advanced 3 Tesla magnetic resonance imaging system delivering unparalleled diagnostic clarity for neurological, musculoskeletal, and cardiovascular assessments.",
-        image: "https://images.unsplash.com/photo-1516549655169-df83a0a60427?auto=format&fit=crop&q=80&w=1600",
-        highlights: [
-            { icon: Activity, label: "0.1mm Resolution", value: "Ultra-High Precision" },
-            { icon: Zap, label: "AI Assisted", value: "30% Faster Scans" },
-            { icon: ShieldCheck, label: "Quiet Suite", value: "97% Noise Reduction" },
-            { icon: Microscope, label: "Multi-nuclear", value: "Clinical Versatility" }
+        name: "PRIMA 465",
+        category: "Critical Care",
+        company: "PENLON",
+        model: "PRIMA 465",
+        image: criticalCareImg,
+        thumbnails: [
+            criticalCareImg,
+            "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=400",
         ],
-        overview: "The Alliance MR-3T represents the pinnacle of diagnostic imaging infrastructure. Engineered specifically for high-throughput tertiary care centers and specialized diagnostic hubs, this high-field magnetic resonance scanner eliminates the compromise between patient comfort and image resolution. Its proprietary AI-accelerated reconstruction algorithms dramatically reduce scan times while enhancing signal-to-noise ratios, allowing clinicians to detect minute pathologies earlier and with greater confidence.",
-        features: [
-            {
-                title: "AI-Driven Image Reconstruction",
-                desc: "Reconstructs complex morphological data using deep learning networks, significantly reducing artifacts.",
-                benefit: "Accuracy"
-            },
-            {
-                title: "Adaptive Coil Technology",
-                desc: "Ultra-lightweight, flexible receiver coils that adapt to any patient morphology seamlessly.",
-                benefit: "Patient Workflow"
-            },
-            {
-                title: "Zero-Boil-Off Helium System",
-                desc: "Advanced closed-loop cooling architecture virtually eliminates the need for helium refills.",
-                benefit: "Reliability & ROI"
-            },
-            {
-                title: "Interoperable Architecture",
-                desc: "Native DICOM 3.0 and HL7 compliance integrating directly into existing HIS/PACS networks.",
-                benefit: "Integration"
-            }
-        ],
-        specifications: [
-            { label: "Model Configuration", value: "MR-3T / Model: XR-9000" },
-            { label: "Field Strength", value: "3.0 Tesla (High Field)" },
-            { label: "Bore Diameter", value: "70 cm (Wide Bore)" },
-            { label: "Gradient Strength", value: "45 mT/m @ 200 T/m/s" },
-            { label: "System Dimensions", value: "1.95m (W) × 2.05m (H) × 1.73m (D)" },
-            { label: "Power Requirements", value: "480V, 3-Phase, 150 kVA Peak" },
-            { label: "Operating Environment", value: "Controlled Temp: 18-22°C, Humidity: 40-60%" },
-            { label: "Certifications", value: "FDA Cleared, CE Marked (MDR), ISO 13485" }
-        ],
-        applications: [
-            "Tertiary Academic Hospitals",
-            "Specialized Neurology Centers",
-            "Advanced Orthopedic Clinics",
-            "Dedicated Independent Diagnostic Facilities"
-        ],
-        gallery: [
-            "https://images.unsplash.com/photo-1516549655169-df83a0a60427?auto=format&fit=crop&q=80&w=800",
-            "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800",
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800"
+        description: [
+            "The Prima 465 is the latest update to the Penlon anaesthetic machine range, providing the ideal solution for today's busy operating room.",
+            "Clinician-focused choices and benefits, including intuitive 15.6\" high-definition touchscreen with virtual flow display and up to three waveform and respiratory loop display.",
+            "Electronic gas mixer with electronic anti-hypoxic device and digital flowmeters",
+            "Improved 12.1\" touchscreen user interface",
+            "Eight ventilation modes",
+            "Suitable for adult, paediatric and neonates",
+            "Multiple anaesthetic gas monitoring options",
+            "NOW with anaesthetic agent consumption"
         ]
     };
 
+    // Set initial main image
+    useEffect(() => {
+        if (!mainImage) {
+            setMainImage(product.image);
+        }
+    }, [product.image]);
+
+    const handleMouseMove = (e) => {
+        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+        setZoomPos({ x, y });
+    };
+
+    const categories = [
+        'CRITICAL CARE', 'CSSD', 'DENTAL', 'ENT', 'GENERAL SURGERY', 'GYNECOLOGY',
+        'HOSPITAL FURNITURE', 'NEUROLOGY', 'NEUROSURGERY', 'OPHTHALMOLOGY',
+        'OR ROOMS', 'ORTHOPAEDICS', 'PEDIATRICS & NEONATOLOGY', 'PHYSIOTHERAPY',
+        'RADIOLOGY', 'WASTE MANAGEMENT', 'WOUND MANAGEMENT'
+    ];
+
+    const brands = [
+        'ACRACUT', 'ARJOHUNTLEIGH', 'BENQ', 'BIOLIGHT', 'BRAIN LAB', 'CANON',
+        'COVIDIEN', 'DMS GROUP'
+    ];
+
     return (
-        <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
-            {/* 1. PRODUCT HERO SECTION */}
-            <section className="bg-white pt-24 pb-16 border-b border-slate-200">
-                <div className="container mx-auto px-4">
-                    {/* Breadcrumbs */}
-                    <div className="flex items-center gap-2 text-sm text-slate-500 font-medium mb-8">
-                        <Link to="/products" className="hover:text-primary transition-colors flex items-center gap-1">
-                            <ArrowLeft size={16} /> Products Catalog
-                        </Link>
-                        <ChevronRight size={14} className="text-slate-300 mx-1" />
-                        <span className="text-slate-800">{product.category}</span>
-                    </div>
+        <div className="bg-white min-h-screen font-sans">
+            {/* 1. DARK HERO SECTION */}
+            <section className="relative h-64 md:h-80 flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1516549655169-df83a0a60427?auto=format&fit=crop&q=80&w=1600"
+                        className="w-full h-full object-cover brightness-[0.4] scale-105"
+                        alt="Hero background"
+                    />
+                    <div className="absolute inset-0 bg-primary/40 mix-blend-multiply" />
+                </div>
 
-                    <div className="flex flex-col lg:flex-row gap-12 xl:gap-20 items-center">
-                        {/* Hero Image */}
-                        <div className="lg:w-1/2 w-full">
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="relative rounded-3xl overflow-hidden bg-slate-100 p-8 border border-slate-200 aspect-square flex items-center justify-center mix-blend-multiply"
-                            >
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover mix-blend-multiply drop-shadow-2xl"
-                                />
-                                <div className="absolute top-6 left-6 flex gap-3">
-                                    <div className="bg-primary text-white text-[11px] font-bold uppercase tracking-wider px-4 py-1.5 rounded-full shadow-sm">
-                                        {product.tag}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </div>
-
-                        {/* Hero Content */}
-                        <div className="lg:w-1/2 w-full space-y-6">
-                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                                <span className="text-accent font-bold uppercase tracking-widest text-xs mb-3 block">{product.category}</span>
-                                <h1 className="text-4xl md:text-5xl lg:text-5xl font-black text-slate-900 leading-tight mb-4">
-                                    {product.name}
-                                </h1>
-                                <p className="text-lg text-slate-600 leading-relaxed font-medium mb-8">
-                                    {product.shortDesc}
-                                </p>
-                            </motion.div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                                className="grid grid-cols-2 gap-4 mb-10"
-                            >
-                                {product.highlights.map((item, idx) => {
-                                    const Icon = item.icon;
-                                    return (
-                                        <div key={idx} className="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-primary shrink-0 shadow-sm">
-                                                <Icon size={18} />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1 text-ellipsis overflow-hidden whitespace-nowrap">{item.label}</p>
-                                                <p className="text-sm font-bold text-slate-900 leading-none">{item.value}</p>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </motion.div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                                className="flex flex-col sm:flex-row gap-4"
-                            >
-                                <Link to="/get-quote" className="btn btn-primary px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-center flex-1 sm:flex-none justify-center font-bold">
-                                    Request a Quote
-                                </Link>
-                                <Link to="/contact" className="px-8 py-4 bg-white text-primary border border-slate-300 rounded-xl font-bold hover:bg-slate-50 hover:border-primary transition-colors text-center flex-1 sm:flex-none justify-center">
-                                    Schedule Consultation
-                                </Link>
-                            </motion.div>
-                        </div>
+                <div className="container mx-auto px-4 relative z-10 text-center">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight mb-4">
+                        {product.name}
+                    </h1>
+                    <div className="flex items-center justify-center gap-2 text-white/80 font-bold text-sm md:text-base">
+                        <Link to="/" className="hover:text-white transition-colors">Home</Link>
+                        <span>//</span>
+                        <span className="text-secondary">{product.name}</span>
                     </div>
                 </div>
             </section>
 
-            <div className="container mx-auto px-4 py-16">
-                <div className="flex flex-col lg:flex-row gap-16 xl:gap-24">
+            <div className="container mx-auto px-4 py-12 md:py-16">
+                <div className="flex flex-col lg:flex-row gap-12">
 
-                    {/* LEFT COLUMN: Main Content */}
-                    <div className="lg:w-2/3 space-y-20">
-
-                        {/* 2. PRODUCT OVERVIEW */}
-                        <section>
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="w-1.5 h-6 bg-accent rounded-full" />
-                                <h2 className="text-2xl font-bold text-slate-900">Clinical Overview</h2>
-                            </div>
-                            <p className="text-lg text-slate-600 leading-relaxed font-normal">
-                                {product.overview}
-                            </p>
-                        </section>
-
-                        {/* 3. KEY FEATURES & BENEFITS */}
-                        <section>
-                            <div className="flex items-center gap-3 my-8">
-                                <div className="w-1.5 h-6 bg-accent rounded-full" />
-                                <h2 className="text-2xl font-bold text-slate-900">Key Advancements & Benefits</h2>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {product.features.map((feature, idx) => (
-                                    <div key={idx} className="bg-white border border-slate-200 p-6 rounded-2xl hover:border-slate-300 transition-colors">
-                                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-primary mb-4">
-                                            <Settings size={18} />
-                                        </div>
-                                        <h3 className="text-lg font-bold text-slate-900 mb-2">{feature.title}</h3>
-                                        <p className="text-sm text-slate-600 leading-relaxed mb-4">{feature.desc}</p>
-                                        <div className="bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded inline-block">
-                                            Outcomes: {feature.benefit}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-
-                        {/* 8. VISUAL GALLERY */}
-                        <section>
-                            <div className="flex items-center justify-between my-8">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-1.5 h-6 bg-accent rounded-full" />
-                                    <h2 className="text-2xl font-bold text-slate-900">System Visuals</h2>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {product.gallery.map((img, idx) => (
-                                    <div key={idx} className={`rounded-2xl overflow-hidden bg-slate-200 border border-slate-200 aspect-[4/3] ${idx === 0 ? 'sm:col-span-2 aspect-[21/9]' : ''}`}>
-                                        <img src={img} alt={`${product.name} view ${idx + 1}`} className="w-full h-full object-cover mix-blend-multiply opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-500" />
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-
-                    </div>
-
-                    {/* RIGHT COLUMN: Specs & Sticky Info */}
-                    <div className="lg:w-1/3 space-y-8">
-
-                        {/* 4. TECHNICAL SPECIFICATIONS */}
-                        <div className="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 shadow-sm">
-                            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                                <Activity size={20} className="text-primary" />
-                                Technical Specifications
+                    {/* 2. SIDEBAR */}
+                    <aside className="lg:w-1/4 space-y-10">
+                        {/* Product Search */}
+                        <div className="space-y-4">
+                            <h3 className="text-secondary font-bold text-xl flex items-center gap-2">
+                                Product Search
                             </h3>
-                            <div className="space-y-4">
-                                {product.specifications.map((spec, idx) => (
-                                    <div key={idx} className="pb-4 border-b border-slate-100 last:border-0 last:pb-0">
-                                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">{spec.label}</p>
-                                        <p className="text-sm font-semibold text-slate-900">{spec.value}</p>
-                                    </div>
-                                ))}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search here..."
+                                    className="w-full border-2 border-slate-100 bg-slate-50 py-3 pl-4 pr-12 rounded-lg focus:border-secondary transition-colors outline-none font-medium"
+                                />
+                                <button className="absolute right-0 top-0 bottom-0 px-4 bg-secondary text-white rounded-r-lg hover:bg-secondary-dark transition-colors">
+                                    <Search size={20} />
+                                </button>
                             </div>
-                            <button className="w-full mt-8 flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 hover:bg-slate-100 text-primary font-bold rounded-xl text-sm transition-colors border border-slate-200">
-                                <Download size={16} /> Download Spec Sheet
-                            </button>
                         </div>
 
-                        {/* 5. CLINICAL/OPERATIONAL APPLICATIONS */}
-                        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                <Building2 size={20} className="text-primary" />
-                                Ideal Environments
-                            </h3>
-                            <ul className="space-y-3">
-                                {product.applications.map((app, idx) => (
-                                    <li key={idx} className="flex items-start gap-3 text-sm text-slate-600 font-medium">
-                                        <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
-                                        {app}
+                        {/* Categories List */}
+                        <div className="space-y-4">
+                            <h3 className="text-secondary font-bold text-xl uppercase">Categories</h3>
+                            <ul className="divide-y divide-slate-100 border-t border-slate-100">
+                                {categories.map((cat, idx) => (
+                                    <li key={idx}>
+                                        <button className="w-full flex items-center justify-between py-3 text-slate-700 hover:text-secondary font-bold text-sm transition-colors group">
+                                            <span className={cat === product.category.toUpperCase() ? 'text-secondary' : ''}>{cat}</span>
+                                            <ChevronRight size={16} className={`transition-transform group-hover:translate-x-1 ${cat === product.category.toUpperCase() ? 'text-secondary' : 'text-slate-300'}`} />
+                                        </button>
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        {/* 6 & 7. INSTALLATION & SUPPORT (Why it stands out) */}
-                        <div className="bg-primary text-white rounded-2xl p-6 shadow-md relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-                            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2 relative z-10">
-                                <Wrench size={20} className="text-accent" />
-                                Alliance Assurance
-                            </h3>
-                            <div className="space-y-4 relative z-10">
-                                <div className="flex gap-4">
-                                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                                        <ShieldCheck size={14} className="text-accent" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-white">Turnkey Installation</h4>
-                                        <p className="text-xs text-slate-300 mt-1">Complete site-prep and commissioning.</p>
-                                    </div>
+                        {/* Brands List */}
+                        <div className="space-y-4">
+                            <h3 className="text-secondary font-bold text-xl uppercase">Brands</h3>
+                            <ul className="divide-y divide-slate-100 border-t border-slate-100">
+                                {brands.map((brand, idx) => (
+                                    <li key={idx}>
+                                        <button className="w-full flex items-center justify-between py-3 text-slate-700 hover:text-secondary font-bold text-sm transition-colors group">
+                                            <span>{brand}</span>
+                                            <ChevronRight size={16} className="text-slate-300 transition-transform group-hover:translate-x-1" />
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </aside>
+
+                    {/* 3. MAIN CONTENT AREA */}
+                    <main className="lg:w-3/4 space-y-12">
+                        <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+                            {/* Product Images */}
+                            <div className="md:w-1/2 space-y-4">
+                                <div
+                                    className="aspect-square bg-white border-2 border-slate-100 rounded-xl overflow-hidden p-4 shadow-sm cursor-zoom-in relative"
+                                    onMouseMove={handleMouseMove}
+                                    onMouseEnter={() => setIsZoomed(true)}
+                                    onMouseLeave={() => setIsZoomed(false)}
+                                >
+                                    <img
+                                        src={mainImage || product.image}
+                                        className="w-full h-full object-contain transition-transform duration-200"
+                                        style={{
+                                            transform: isZoomed ? 'scale(2)' : 'scale(1)',
+                                            transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`
+                                        }}
+                                        alt={product.name}
+                                    />
+                                    {!isZoomed && (
+                                        <div className="absolute bottom-6 right-6 bg-white/80 p-2 rounded-full shadow-md text-secondary">
+                                            <Search size={18} />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex gap-4">
-                                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                                        <Activity size={14} className="text-accent" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-sm font-bold text-white">24/7 Remote Monitoring</h4>
-                                        <p className="text-xs text-slate-300 mt-1">Predictive maintenance prevents downtime.</p>
+                                    {product.thumbnails.map((thumb, idx) => (
+                                        <div
+                                            key={idx}
+                                            onClick={() => setMainImage(thumb)}
+                                            className={`w-24 h-24 border-2 rounded-lg overflow-hidden p-2 bg-white cursor-pointer transition-all ${mainImage === thumb ? 'border-secondary shadow-md scale-105' : 'border-slate-100 hover:border-secondary/50'}`}
+                                        >
+                                            <img src={thumb} className="w-full h-full object-contain" alt="Thumbnail" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Product Summary & Specs */}
+                            <div className="md:w-1/2 space-y-6">
+                                <div>
+                                    <h2 className="text-3xl font-black text-secondary leading-tight uppercase">{product.name}</h2>
+                                    <p className="text-slate-600 font-bold text-sm mt-1">Category : {product.category}</p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h4 className="border-b-2 border-secondary inline-block pb-1 text-primary font-black text-lg">
+                                        Product Specification
+                                    </h4>
+                                    <div className="grid grid-cols-[120px_1fr] md:grid-cols-[150px_1fr] gap-y-4 text-sm md:text-base">
+                                        <div className="font-black text-primary uppercase">COMPANY :</div>
+                                        <div className="font-bold text-slate-600 uppercase">{product.company}</div>
+
+                                        <div className="font-black text-primary uppercase">MODEL NAME/NUMBER :</div>
+                                        <div className="font-bold text-slate-600 uppercase">{product.model}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                    </div>
+                        {/* Tabs Section */}
+                        <div className="border-t border-slate-100 pt-8">
+                            <div className="flex border-b border-slate-100">
+                                {['Description', 'Brochures'].map(tab => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`px-8 py-3 font-bold text-sm md:text-base border-t border-x rounded-t-lg transition-colors -mb-[1px] ${activeTab === tab
+                                            ? 'bg-white border-slate-100 text-secondary border-t-2 border-t-secondary'
+                                            : 'bg-slate-50 border-transparent text-slate-500 hover:text-primary'}`}
+                                    >
+                                        {tab}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="py-8">
+                                {activeTab === 'Description' ? (
+                                    <div className="space-y-6">
+                                        <h4 className="text-primary font-black text-xl">Product Description:</h4>
+                                        <div className="space-y-4">
+                                            {product.description.slice(0, 2).map((para, i) => (
+                                                <p key={i} className="text-slate-600 font-medium leading-relaxed">
+                                                    {para}
+                                                </p>
+                                            ))}
+                                            <ul className="space-y-3 pt-2">
+                                                {product.description.slice(2).map((item, i) => (
+                                                    <li key={i} className="flex items-start gap-3 text-slate-600 font-medium">
+                                                        <ChevronRight size={18} className="text-secondary shrink-0 mt-0.5" />
+                                                        {item}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-wrap gap-4">
+                                        <button className="flex items-center gap-3 bg-white border-2 border-slate-100 px-6 py-4 rounded-xl hover:border-secondary hover:text-secondary group transition-all">
+                                            <FileText className="text-secondary" />
+                                            <div className="text-left">
+                                                <p className="font-black text-primary group-hover:text-secondary text-sm uppercase">Technical Brochure</p>
+                                                <p className="text-xs text-slate-500 font-bold uppercase">PDF Format (4.2 MB)</p>
+                                            </div>
+                                            <Download size={18} className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </main>
                 </div>
             </div>
 
-            {/* 9. FINAL CALL-TO-ACTION SECTION */}
-            <section className="bg-white py-24 border-t border-slate-200 text-center relative overflow-hidden">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-50 rounded-full blur-[100px] pointer-events-none" />
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="max-w-3xl mx-auto border border-slate-100 bg-white/50 backdrop-blur-xl p-10 md:p-16 rounded-[2.5rem] shadow-xl">
-                        <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                            <ShieldCheck size={32} className="text-accent" />
-                        </div>
-                        <h2 className="text-3xl lg:text-4xl font-black text-slate-900 mb-4">Equip Your Facility with Proven Technology</h2>
-                        <p className="text-lg text-slate-600 mb-10 font-medium">
-                            Our architecture and procurement specialists are ready to help you validate integration requirements and calculate total cost of ownership.
-                        </p>
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <Link to="/get-quote" className="px-8 py-4 bg-primary text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-                                Request Official Pricing
-                            </Link>
-                            <Link to="/contact" className="px-8 py-4 bg-white text-primary border border-slate-200 rounded-xl font-bold hover:bg-slate-50 hover:border-slate-300 transition-colors">
-                                Talk to a Specialist
-                            </Link>
-                        </div>
+            {/* QUICK CONTACT STRIP */}
+            <section className="bg-primary py-12 md:py-16 mt-20">
+                <div className="container mx-auto px-4 text-center space-y-8">
+                    <h2 className="text-3xl md:text-4xl font-black text-white uppercase">Ready to get started?</h2>
+                    <div className="flex flex-col sm:flex-row justify-center gap-6">
+                        <Link to="/get-quote" className="bg-secondary text-white px-10 py-4 rounded-lg font-black uppercase tracking-wider hover:bg-secondary-dark transition-colors shadow-lg shadow-secondary/20">
+                            Get A Quote
+                        </Link>
+                        <Link to="/contact" className="bg-white text-primary px-10 py-4 rounded-lg font-black uppercase tracking-wider hover:bg-slate-50 transition-colors shadow-lg shadow-white/10">
+                            Contact Us
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -309,5 +285,4 @@ const ProductDetail = () => {
     );
 };
 
-// Missing import fix for Building2 - adding to the top locally if required based on use, but it's used so it must be imported. Let's fix imports in the replace_file_content if I missed any. Wait, I imported it in the top list? No I didn't import Building2 in my initial list. Let me check: `import { ArrowLeft, ArrowRight, ShieldCheck, CheckCircle2, Zap, Activity, Microscope, Settings, Wrench, Download, ChevronRight } from 'lucide-react';`. Ah, I need to add Building2. I will do a quick replace.
 export default ProductDetail;

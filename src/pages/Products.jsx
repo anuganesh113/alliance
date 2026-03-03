@@ -1,10 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Filter, ShieldCheck, Zap, Activity, Microscope, Cpu, CheckCircle2, Award } from 'lucide-react';
+import {
+    Search,
+    ChevronRight,
+    Filter,
+    ShieldCheck,
+    Zap,
+    Activity,
+    Microscope,
+    Cpu,
+    CheckCircle2,
+    Award,
+    Building2,
+    ArrowRight
+} from 'lucide-react';
 
 const Products = () => {
     const [activeCategory, setActiveCategory] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const categories = [
         'All',
@@ -16,13 +34,17 @@ const Products = () => {
         'Monitoring & Imaging'
     ];
 
+    const brands = [
+        'PENLON', 'PHILIPS', 'GE HEALTHCARE', 'SIEMENS', 'MINDRAY'
+    ];
+
     const products = [
         {
             id: 1,
             name: "Alliance MR-3T High-Field Scanner",
             category: "Diagnostic Equipment",
             image: "https://images.unsplash.com/photo-1516549655169-df83a0a60427?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Advanced 3 Tesla magnetic resonance imaging system.",
+            shortDesc: "Advanced 3 Tesla magnetic resonance imaging system for high-resolution diagnostics.",
             highlight: "Ultra-High Resolution",
             icon: Microscope,
             tag: "Advanced"
@@ -32,7 +54,7 @@ const Products = () => {
             name: "VitaCare ICU Ventilator Pro",
             category: "Medical Devices",
             image: "https://images.unsplash.com/photo-1551884170-09fb70a3a2ed?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Comprehensive respiratory support for critical care.",
+            shortDesc: "Comprehensive respiratory support for critical care environments and ICUs.",
             highlight: "Adaptive Lung Protection",
             icon: Activity,
             tag: "Popular"
@@ -42,17 +64,18 @@ const Products = () => {
             name: "OmniNet Enterprise PACS",
             category: "Healthcare IT Solutions",
             image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Scalable picture archiving and communication system.",
+            shortDesc: "Scalable picture archiving and communication system for enterprise-wide imaging.",
             highlight: "Zero-Footprint Viewer",
             icon: Cpu,
             tag: "New"
         },
+        // ... (keeping the rest of the products consistent with original)
         {
             id: 4,
             name: "AutoLab BioAnalyzer 5000",
             category: "Laboratory Systems",
             image: "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "High-throughput biochemistry analysis workstation.",
+            shortDesc: "High-throughput biochemistry analysis workstation for clinical laboratories.",
             highlight: "800 Tests/Hour",
             icon: Zap,
             tag: null
@@ -62,7 +85,7 @@ const Products = () => {
             name: "ModuCare Modular OT",
             category: "Hospital Infrastructure",
             image: "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Antibacterial, seamless steel panel operating theaters.",
+            shortDesc: "Antibacterial, seamless steel panel operating theaters for surgical excellence.",
             highlight: "Class 100 Cleanroom",
             icon: ShieldCheck,
             tag: null
@@ -72,7 +95,7 @@ const Products = () => {
             name: "AeroSense Patient Monitor",
             category: "Monitoring & Imaging",
             image: "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Continuous multi-parameter vital signs monitoring.",
+            shortDesc: "Continuous multi-parameter vital signs monitoring for ward and ICU patient care.",
             highlight: "Wireless Telemetry",
             icon: Activity,
             tag: "Popular"
@@ -82,7 +105,7 @@ const Products = () => {
             name: "Lumina 128-Slice CT Scanner",
             category: "Diagnostic Equipment",
             image: "https://images.unsplash.com/photo-1530432999454-015a31a5eb23?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Low-dose, high-speed computed tomography system.",
+            shortDesc: "Low-dose, high-speed computed tomography system for rapid diagnostic scanning.",
             highlight: "AI Artifact Reduction",
             icon: Microscope,
             tag: null
@@ -92,244 +115,237 @@ const Products = () => {
             name: "Alliance HIS Platform Architecture",
             category: "Healthcare IT Solutions",
             image: "https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Integrated hospital management and billing software.",
+            shortDesc: "Integrated hospital management and billing software for clinic and enterprise needs.",
             highlight: "HL7 Compliant",
             icon: Cpu,
             tag: "Enterprise"
         }
     ];
 
-    const filteredProducts = activeCategory === 'All'
-        ? products
-        : products.filter(p => p.category === activeCategory);
+    const filteredProducts = products.filter(p => {
+        const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.shortDesc.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
 
     return (
-        <div className="flex flex-col font-sans bg-slate-50 min-h-screen">
-            {/* 1. PAGE HERO / INTRO SECTION */}
-            <section className="relative pt-32 pb-20 bg-white border-b border-slate-200 overflow-hidden">
-                <div className="absolute inset-0 z-0 pointer-events-none">
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-100 rounded-full blur-[100px] opacity-70 -translate-y-1/2 translate-x-1/3" />
-                    <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-slate-100 rounded-full blur-[120px] opacity-50 translate-y-1/3 -translate-x-1/4" />
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] mix-blend-overlay" />
+        <div className="bg-white min-h-screen font-sans">
+            {/* 1. DARK HERO SECTION */}
+            <section className="relative h-64 md:h-80 flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000"
+                        className="w-full h-full object-cover opacity-30 brightness-50"
+                        alt="Hero background"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary/70 mix-blend-multiply" />
+                    <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" />
                 </div>
 
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="max-w-3xl">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 font-bold text-xs uppercase tracking-widest mb-6"
-                        >
-                            <ShieldCheck size={14} className="text-primary" />
-                            <span>Enterprise Solutions Catalog</span>
-                        </motion.div>
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6"
-                        >
-                            Healthcare Technologies <br />
-                            <span className="text-primary">& Equipment.</span>
-                        </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-lg md:text-xl text-slate-600 font-normal leading-relaxed max-w-2xl"
-                        >
-                            Explore our comprehensive portfolio of clinical innovations. Designed for high-reliability environments, our systems deliver precision, interoperability, and operational excellence for modern medical institutions.
-                        </motion.p>
-                    </div>
+                <div className="container mx-auto px-4 relative z-10 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-4"
+                    >
+                        <nav className="flex items-center justify-center gap-2 text-white/60 text-xs font-bold uppercase tracking-widest mb-4">
+                            <Link to="/" className="hover:text-secondary transition-colors">Home</Link>
+                            <span>//</span>
+                            <span className="text-white">Our Products</span>
+                        </nav>
+                        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight uppercase leading-none">
+                            Our <span className="text-secondary">Products</span>
+                        </h1>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* 6. SUPPORTING INFORMATION SECTION */}
-            <section className="bg-primary py-4 border-y border-primary-light/20 relative z-20">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-12 text-center sm:text-left">
-                        <div className="flex items-center gap-3 text-white/90 text-sm font-medium">
-                            <CheckCircle2 size={18} className="text-accent" />
-                            <span>Certified Installation & Calibration</span>
-                        </div>
-                        <div className="hidden sm:block w-1 h-1 rounded-full bg-white/30" />
-                        <div className="flex items-center gap-3 text-white/90 text-sm font-medium">
-                            <Zap size={18} className="text-accent" />
-                            <span>Comprehensive Clinical Training</span>
-                        </div>
-                        <div className="hidden sm:block w-1 h-1 rounded-full bg-white/30" />
-                        <div className="flex items-center gap-3 text-white/90 text-sm font-medium">
-                            <Activity size={18} className="text-accent" />
-                            <span>24/7 Priority Technical Support</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <div className="container mx-auto px-4 py-12 md:py-16">
+                <div className="flex flex-col lg:flex-row gap-12">
 
-            {/* MAIN CATALOG AREA */}
-            <section className="py-16">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-col lg:flex-row gap-10">
-
-                        {/* 2 & 4. PRODUCT CATEGORY NAVIGATION / QUICK FILTERING */}
-                        <div className="lg:w-1/4 shrink-0">
-                            <div className="sticky top-24 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                                <div className="flex items-center gap-2 text-slate-900 font-bold text-lg mb-6 pb-4 border-b border-slate-100">
-                                    <Filter size={20} />
-                                    Categories
-                                </div>
-                                <ul className="space-y-2">
-                                    {categories.map((cat) => (
-                                        <li key={cat}>
-                                            <button
-                                                onClick={() => setActiveCategory(cat)}
-                                                className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex justify-between items-center ${activeCategory === cat
-                                                        ? 'bg-primary text-white shadow-md'
-                                                        : 'text-slate-600 hover:bg-slate-50 hover:text-primary'
-                                                    }`}
-                                            >
-                                                {cat}
-                                                {activeCategory === cat && <ChevronRight size={16} className="text-accent" />}
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
+                    {/* 2. SIDEBAR */}
+                    <aside className="lg:w-1/4 space-y-10">
+                        {/* Search Bar */}
+                        <div className="space-y-4">
+                            <h3 className="text-secondary font-bold text-xl uppercase">Product Search</h3>
+                            <div className="relative group">
+                                <input
+                                    type="text"
+                                    placeholder="Search by keywords..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-secondary focus:outline-none transition-all pr-12 text-sm font-medium group-hover:bg-slate-100 hover:border-slate-200"
+                                />
+                                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-secondary transition-colors" size={20} />
                             </div>
                         </div>
 
-                        {/* 3. PRODUCT GRID */}
-                        <div className="lg:w-3/4">
-                            {/* Grid Header */}
-                            <div className="flex justify-between items-end mb-8">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-slate-900">{activeCategory} Solutions</h2>
-                                    <p className="text-slate-500 text-sm mt-1">Showing {filteredProducts.length} technologies</p>
+                        {/* Categories List */}
+                        <div className="space-y-4">
+                            <h3 className="text-secondary font-bold text-xl uppercase">Categories</h3>
+                            <ul className="divide-y divide-slate-100 border-t border-slate-100">
+                                {categories.map((cat, idx) => (
+                                    <li key={idx}>
+                                        <button
+                                            onClick={() => setActiveCategory(cat)}
+                                            className="w-full flex items-center justify-between py-3 text-slate-700 hover:text-secondary font-bold text-sm transition-colors group text-left"
+                                        >
+                                            <span className={activeCategory === cat ? 'text-secondary font-black' : ''}>{cat.toUpperCase()}</span>
+                                            <ChevronRight size={16} className={`transition-transform group-hover:translate-x-1 ${activeCategory === cat ? 'text-secondary translate-x-1' : 'text-slate-300'}`} />
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* Brands List */}
+                        <div className="space-y-4">
+                            <h3 className="text-secondary font-bold text-xl uppercase">Brands</h3>
+                            <ul className="divide-y divide-slate-100 border-t border-slate-100">
+                                {brands.map((brand, idx) => (
+                                    <li key={idx}>
+                                        <div className="w-full flex items-center justify-between py-3 text-slate-700 hover:text-secondary font-bold text-sm transition-colors group">
+                                            <span>{brand}</span>
+                                            <ChevronRight size={16} className="text-slate-300 transition-transform group-hover:translate-x-1" />
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* Quick Contact Box */}
+                        <div className="bg-primary rounded-2xl p-8 text-white relative overflow-hidden group shadow-xl">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-500" />
+                            <div className="relative z-10 space-y-6">
+                                <Building2 size={32} className="text-secondary" />
+                                <div className="space-y-2">
+                                    <h4 className="text-xl font-black uppercase">Need Help?</h4>
+                                    <p className="text-white/70 text-sm font-medium leading-relaxed">
+                                        Speak with our experts for specialized medical equipment solutions.
+                                    </p>
                                 </div>
+                                <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-white font-bold rounded-xl text-sm hover:bg-secondary-light transition-all shadow-lg hover:shadow-secondary/20">
+                                    Contact Us
+                                    <ArrowRight size={16} />
+                                </Link>
                             </div>
+                        </div>
+                    </aside>
 
-                            {/* The Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                <AnimatePresence mode="popLayout">
-                                    {filteredProducts.map((product) => {
-                                        const Icon = product.icon;
-                                        return (
-                                            <motion.div
-                                                layout
-                                                initial={{ opacity: 0, scale: 0.95 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.95 }}
-                                                transition={{ duration: 0.3 }}
-                                                key={product.id}
-                                                className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col group cursor-pointer"
-                                            >
-                                                {/* Image Area */}
-                                                <div className="h-48 relative overflow-hidden bg-slate-100 p-6 flex items-center justify-center">
-                                                    <img
-                                                        src={product.image}
-                                                        alt={product.name}
-                                                        className="w-full h-full object-cover mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-500"
-                                                    />
-                                                    {product.tag && (
-                                                        <div className="absolute top-4 left-4 bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
-                                                            {product.tag}
-                                                        </div>
-                                                    )}
-                                                </div>
+                    {/* 3. MAIN CONTENT AREA */}
+                    <main className="lg:w-3/4 space-y-8">
+                        {/* Results Header */}
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-6">
+                            <div>
+                                <h2 className="text-2xl font-black text-primary uppercase">
+                                    {activeCategory === 'All' ? 'All Solutions' : activeCategory}
+                                </h2>
+                                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1">
+                                    Found {filteredProducts.length} Results
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-3 text-sm font-bold text-slate-400">
+                                <span>SORT BY:</span>
+                                <select className="bg-transparent text-primary focus:outline-none cursor-pointer">
+                                    <option>DEFAULT</option>
+                                    <option>NAME (A-Z)</option>
+                                    <option>NEWEST</option>
+                                </select>
+                            </div>
+                        </div>
 
-                                                {/* Content Area */}
-                                                <div className="p-6 flex flex-col flex-grow">
-                                                    <div className="flex items-center gap-2 mb-3">
-                                                        <div className="w-6 h-6 rounded bg-slate-50 flex items-center justify-center text-primary border border-slate-100">
-                                                            <Icon size={12} />
-                                                        </div>
-                                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{product.category}</span>
+                        {/* Product Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                            <AnimatePresence mode="popLayout">
+                                {filteredProducts.map((product) => (
+                                    <motion.div
+                                        layout
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.9 }}
+                                        key={product.id}
+                                        className="group"
+                                    >
+                                        <Link to={`/products/${product.id}`} className="block bg-white border-2 border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-secondary transition-all duration-300">
+                                            {/* Image container */}
+                                            <div className="aspect-[4/3] relative overflow-hidden bg-slate-50 p-6 flex items-center justify-center">
+                                                <img
+                                                    src={product.image}
+                                                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+                                                    alt={product.name}
+                                                />
+                                                {product.tag && (
+                                                    <div className="absolute top-4 left-4 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
+                                                        {product.tag}
                                                     </div>
+                                                )}
+                                                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300" />
+                                            </div>
 
-                                                    <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2 group-hover:text-primary transition-colors">
-                                                        {product.name}
-                                                    </h3>
-
-                                                    <p className="text-sm text-slate-600 mb-6 flex-grow">
-                                                        {product.shortDesc}
-                                                    </p>
-
-                                                    {/* Highlight Box */}
-                                                    <div className="bg-slate-50 rounded-lg px-4 py-2 mb-6 border border-slate-100 flex items-center gap-2">
-                                                        <Award size={14} className="text-accent shrink-0" />
-                                                        <span className="text-xs font-semibold text-slate-700">{product.highlight}</span>
-                                                    </div>
-
-                                                    <Link to={`/products/${product.id}`} className="mt-auto w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 hover:border-slate-300 hover:text-primary transition-all text-sm group-hover:bg-primary group-hover:text-white group-hover:border-primary">
-                                                        View Details
-                                                        <ChevronRight size={16} className="-ml-1 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                                                    </Link>
+                                            {/* Content container */}
+                                            <div className="p-6 space-y-4">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{product.category}</span>
                                                 </div>
-                                            </motion.div>
-                                        );
-                                    })}
-                                </AnimatePresence>
-                            </div>
+                                                <h3 className="text-lg font-black text-primary leading-tight uppercase group-hover:text-secondary transition-colors line-clamp-2 min-h-[3.5rem]">
+                                                    {product.name}
+                                                </h3>
+                                                <p className="text-slate-500 text-xs font-medium leading-relaxed line-clamp-3">
+                                                    {product.shortDesc}
+                                                </p>
 
-                            {filteredProducts.length === 0 && (
-                                <div className="text-center py-20">
-                                    <div className="inline-flex w-16 h-16 rounded-full bg-slate-100 items-center justify-center text-slate-400 mb-4">
-                                        <Filter size={32} />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-slate-900 mb-2">No solutions found</h3>
-                                    <p className="text-slate-500">Please select a different category to view available technologies.</p>
+                                                <div className="pt-4 flex items-center justify-between border-t border-slate-50">
+                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                        <CheckCircle2 size={14} className="text-secondary" />
+                                                        Technical Specs
+                                                    </span>
+                                                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-primary group-hover:bg-secondary group-hover:text-white transition-all transform group-hover:translate-x-1">
+                                                        <ChevronRight size={18} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+
+                        {filteredProducts.length === 0 && (
+                            <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-6">
+                                    <Search size={40} />
                                 </div>
-                            )}
-                        </div>
-                    </div>
+                                <h3 className="text-2xl font-black text-primary uppercase">No Results Found</h3>
+                                <p className="text-slate-500 font-bold text-sm mt-2">
+                                    We couldn't find any products matching your criteria.
+                                </p>
+                                <button
+                                    onClick={() => { setActiveCategory('All'); setSearchQuery(''); }}
+                                    className="mt-8 px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all uppercase text-xs tracking-widest"
+                                >
+                                    Reset Filters
+                                </button>
+                            </div>
+                        )}
+                    </main>
                 </div>
-            </section>
+            </div>
 
-            {/* 5. FEATURED PRODUCTS STRIP (Integrated into a section) */}
-            <section className="py-20 bg-primary relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
-                <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-l from-accent/20 to-transparent pointer-events-none" />
-
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-12 bg-white/5 border border-white/10 rounded-3xl p-8 lg:p-12 backdrop-blur-md">
-                        <div className="lg:w-1/2">
-                            <span className="text-accent font-bold uppercase tracking-widest text-xs mb-3 block">Flagship Innovation</span>
-                            <h2 className="text-3xl lg:text-4xl font-black text-white leading-tight mb-4">
-                                Next-Gen AI Pathology System
-                            </h2>
-                            <p className="text-slate-300 mb-8 max-w-lg leading-relaxed">
-                                Accelerate diagnostic throughput by 60% with our new multi-slide digital scanning architecture, featuring integrated AI lesion detection and remote collaborative viewing.
-                            </p>
-                            <Link to="/contact" className="btn btn-secondary px-8 py-3 rounded-xl text-primary font-bold shadow-lg hover:shadow-xl bg-white hover:scale-105 transition-transform inline-block">
-                                Explore Technical Overview
-                            </Link>
-                        </div>
-                        <div className="lg:w-1/2 relative">
-                            <img
-                                src="https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?auto=format&fit=crop&q=80&w=800"
-                                alt="AI Pathology"
-                                className="rounded-2xl shadow-2xl mix-blend-luminosity hover:mix-blend-normal transition-all duration-700"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* 7. CALL-TO-ACTION SECTION */}
-            <section className="py-24 bg-white text-center border-t border-slate-200">
+            {/* Quick Contact Strip */}
+            <section className="bg-slate-50 border-t border-slate-100 py-12">
                 <div className="container mx-auto px-4">
-                    <div className="max-w-3xl mx-auto">
-                        <h2 className="text-3xl lg:text-4xl font-black text-slate-900 mb-6">Need Help Selecting the Right Solution?</h2>
-                        <p className="text-lg text-slate-600 mb-10">
-                            Our biomedical engineers and technical architects are available to help you evaluate specifications, integration requirements, and procurement options for your facility.
-                        </p>
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <Link to="/contact" className="px-8 py-4 bg-primary text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm">
-                                Contact Our Specialists
-                            </Link>
-                            <Link to="/get-quote" className="px-8 py-4 bg-white text-primary border border-slate-200 rounded-xl font-bold hover:bg-slate-50 hover:border-slate-300 transition-colors">
-                                Request Product Consultation
-                            </Link>
-                        </div>
+                    <div className="flex flex-wrap justify-center gap-8 md:gap-16">
+                        {[
+                            { icon: CheckCircle2, label: "Certified Installation" },
+                            { icon: Zap, label: "Clinical Training" },
+                            { icon: Activity, label: "24/7 Support" }
+                        ].map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-3">
+                                <item.icon className="text-secondary" size={20} />
+                                <span className="text-slate-900 font-black text-xs uppercase tracking-widest">{item.label}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
