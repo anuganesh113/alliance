@@ -6,16 +6,23 @@ import {
     ChevronRight,
     ArrowRight,
     Download,
-    Link as LinkIcon,
-    ChevronLeft,
-    ChevronDown,
     Activity,
-    FileText
+    FileText,
+    Loader
 } from 'lucide-react';
-import criticalCareImg from '../assets/critical-care.webp';
+
+const API_BASE = 'https://alliancehealthcare.anoopinnovations.com/api/v1/front/products';
+
+const placeholderImages = [
+    "https://images.unsplash.com/photo-1516549655169-df83a0a60427?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1551884170-09fb70a3a2ed?auto=format&fit=crop&q=80&w=800",
+];
 
 const ProductDetail = () => {
     const { productId } = useParams();
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('Description');
     const [mainImage, setMainImage] = useState(null);
     const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
@@ -23,37 +30,40 @@ const ProductDetail = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        fetchProduct();
     }, [productId]);
 
-    // Simplified mock data based on reference image
-    const product = {
-        name: "PRIMA 465",
-        category: "Critical Care",
-        company: "PENLON",
-        model: "PRIMA 465",
-        image: criticalCareImg,
-        thumbnails: [
-            criticalCareImg,
-            "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=400",
-        ],
-        description: [
-            "The Prima 465 is the latest update to the Penlon anaesthetic machine range, providing the ideal solution for today's busy operating room.",
-            "Clinician-focused choices and benefits, including intuitive 15.6\" high-definition touchscreen with virtual flow display and up to three waveform and respiratory loop display.",
-            "Electronic gas mixer with electronic anti-hypoxic device and digital flowmeters",
-            "Improved 12.1\" touchscreen user interface",
-            "Eight ventilation modes",
-            "Suitable for adult, paediatric and neonates",
-            "Multiple anaesthetic gas monitoring options",
-            "NOW with anaesthetic agent consumption"
-        ]
-    };
-
-    // Set initial main image
-    useEffect(() => {
-        if (!mainImage) {
-            setMainImage(product.image);
+    const fetchProduct = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await fetch(`${API_BASE}/${productId}`);
+            const json = await res.json();
+            if (json.success && json.data) {
+                const p = json.data;
+                const thumbnails = p.images.length > 0 ? p.images : placeholderImages;
+                const mapped = {
+                    name: p.product_name,
+                    category: p.category || 'General',
+                    company: 'Alliance Healthcare',
+                    model: p.product_name,
+                    image: p.image || placeholderImages[0],
+                    thumbnails,
+                    product_desc: p.product_desc,
+                    short_desc: p.short_desc,
+                    specifications: p.specifications || [],
+                };
+                setProduct(mapped);
+                setMainImage(mapped.image);
+            } else {
+                setError('Product not found.');
+            }
+        } catch (err) {
+            setError('Failed to load product details. Please try again.');
+        } finally {
+            setLoading(false);
         }
-    }, [product.image]);
+    };
 
     const handleMouseMove = (e) => {
         const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -73,6 +83,33 @@ const ProductDetail = () => {
         'ACRACUT', 'ARJOHUNTLEIGH', 'BENQ', 'BIOLIGHT', 'BRAIN LAB', 'CANON',
         'COVIDIEN', 'DMS GROUP'
     ];
+
+    if (loading) {
+        return (
+            <div className="bg-white min-h-screen font-sans flex items-center justify-center">
+                <div className="text-center space-y-6">
+                    <Loader className="animate-spin text-secondary mx-auto" size={48} />
+                    <h3 className="text-2xl font-black text-primary uppercase">Loading Product</h3>
+                    <p className="text-slate-500 font-bold text-sm">Please wait...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !product) {
+        return (
+            <div className="bg-white min-h-screen font-sans flex flex-col items-center justify-center space-y-6">
+                <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center text-red-400 mx-auto">
+                    <Search size={40} />
+                </div>
+                <h3 className="text-2xl font-black text-primary uppercase">Product Not Found</h3>
+                <p className="text-slate-500 font-bold text-sm">{error || 'The requested product does not exist.'}</p>
+                <Link to="/products" className="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all uppercase text-xs tracking-widest">
+                    Back to Products
+                </Link>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white min-h-screen font-sans">
@@ -233,21 +270,10 @@ const ProductDetail = () => {
                                 {activeTab === 'Description' ? (
                                     <div className="space-y-6">
                                         <h4 className="text-primary font-black text-xl">Product Description:</h4>
-                                        <div className="space-y-4">
-                                            {product.description.slice(0, 2).map((para, i) => (
-                                                <p key={i} className="text-slate-600 font-medium leading-relaxed">
-                                                    {para}
-                                                </p>
-                                            ))}
-                                            <ul className="space-y-3 pt-2">
-                                                {product.description.slice(2).map((item, i) => (
-                                                    <li key={i} className="flex items-start gap-3 text-slate-600 font-medium">
-                                                        <ChevronRight size={18} className="text-secondary shrink-0 mt-0.5" />
-                                                        {item}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
+                                        <div
+                                            className="text-slate-600 leading-relaxed space-y-4 [&_h3]:text-primary [&_h3]:font-black [&_h3]:text-lg [&_ul]:space-y-3 [&_ul]:pt-2 [&_li]:flex [&_li]:items-start [&_li]:gap-3 [&_li]:font-medium [&_li]:before:content-[''] [&_li]:before:w-[18px] [&_li]:before:h-[18px] [&_li]:before:bg-secondary [&_li]:before:shrink-0 [&_li]:before:mt-1 [&_p]:font-medium"
+                                            dangerouslySetInnerHTML={{ __html: product.product_desc }}
+                                        />
                                     </div>
                                 ) : (
                                     <div className="flex flex-wrap gap-4">

@@ -1,8 +1,55 @@
-import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { Mail, Phone, MapPin, Clock, ArrowRight, Loader, CheckCircle2 } from 'lucide-react';
 import SectionTitle from '../components/SectionTitle';
 
 const Contact = () => {
+    const [form, setForm] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        subject: 'General Inquiry',
+        description: '',
+    });
+    const [errors, setErrors] = useState({});
+    const [submitting, setSubmitting] = useState(false);
+    const [success, setSuccess] = useState(false);
+
+    const handleChange = (e) => {
+        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        if (errors[e.target.name]) {
+            setErrors(prev => ({ ...prev, [e.target.name]: null }));
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitting(true);
+        setErrors({});
+        setSuccess(false);
+
+        try {
+            const res = await fetch('https://alliancehealthcare.anoopinnovations.com/api/v1/front/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form),
+            });
+            const json = await res.json();
+            if (res.ok && json.success) {
+                setSuccess(true);
+                setForm({ first_name: '', last_name: '', email: '', phone: '', subject: 'General Inquiry', description: '' });
+            } else if (json.errors) {
+                setErrors(json.errors);
+            } else {
+                setErrors({ form: json.message || 'Submission failed. Please try again.' });
+            }
+        } catch (err) {
+            setErrors({ form: 'Network error. Please check your connection and try again.' });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     return (
         <div className="flex flex-col">
             {/* Simple Header */}
@@ -74,46 +121,109 @@ const Contact = () => {
                         <div className="lg:w-2/3 p-8 lg:p-12">
                             <SectionTitle alignment="left" subtitle="Inquiry Form" title="Send us a Message" />
 
-                            <form className="space-y-6">
+                            {success && (
+                                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-green-700 font-medium">
+                                    <CheckCircle2 size={20} className="shrink-0" />
+                                    Thank you! Your message has been sent successfully. We'll get back to you shortly.
+                                </div>
+                            )}
+
+                            {errors.form && (
+                                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 font-medium text-sm">
+                                    {errors.form}
+                                </div>
+                            )}
+
+                            <form className="space-y-6" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
-                                        <input type="text" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors" placeholder="John" />
+                                        <input
+                                            type="text"
+                                            name="first_name"
+                                            value={form.first_name}
+                                            onChange={handleChange}
+                                            className={`w-full px-4 py-3 rounded-lg border ${errors.first_name ? 'border-red-400' : 'border-slate-300'} focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors`}
+                                            placeholder="John"
+                                        />
+                                        {errors.first_name && <p className="text-red-500 text-xs mt-1">{errors.first_name[0]}</p>}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
-                                        <input type="text" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors" placeholder="Doe" />
+                                        <input
+                                            type="text"
+                                            name="last_name"
+                                            value={form.last_name}
+                                            onChange={handleChange}
+                                            className={`w-full px-4 py-3 rounded-lg border ${errors.last_name ? 'border-red-400' : 'border-slate-300'} focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors`}
+                                            placeholder="Doe"
+                                        />
+                                        {errors.last_name && <p className="text-red-500 text-xs mt-1">{errors.last_name[0]}</p>}
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-                                        <input type="email" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors" placeholder="john@company.com" />
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={form.email}
+                                            onChange={handleChange}
+                                            className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-400' : 'border-slate-300'} focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors`}
+                                            placeholder="john@company.com"
+                                        />
+                                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email[0]}</p>}
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
-                                        <input type="tel" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors" placeholder="+977 98XXXXXXXX" />
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            value={form.phone}
+                                            onChange={handleChange}
+                                            className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-400' : 'border-slate-300'} focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors`}
+                                            placeholder="+977 98XXXXXXXX"
+                                        />
+                                        {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone[0]}</p>}
                                     </div>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Subject</label>
-                                    <select className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors bg-white">
+                                    <select
+                                        name="subject"
+                                        value={form.subject}
+                                        onChange={handleChange}
+                                        className={`w-full px-4 py-3 rounded-lg border ${errors.subject ? 'border-red-400' : 'border-slate-300'} focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors bg-white`}
+                                    >
                                         <option>General Inquiry</option>
                                         <option>Request a Quote</option>
                                         <option>Service & Maintenance Support</option>
                                         <option>Partnership Proposal</option>
                                     </select>
+                                    {errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject[0]}</p>}
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Message</label>
-                                    <textarea rows="4" className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors resize-none" placeholder="Tell us about your requirements..."></textarea>
+                                    <textarea
+                                        name="description"
+                                        value={form.description}
+                                        onChange={handleChange}
+                                        rows="4"
+                                        className={`w-full px-4 py-3 rounded-lg border ${errors.description ? 'border-red-400' : 'border-slate-300'} focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors resize-none`}
+                                        placeholder="Tell us about your requirements..."
+                                    ></textarea>
+                                    {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description[0]}</p>}
                                 </div>
 
-                                <button type="submit" className="btn btn-primary w-full md:w-auto px-8">
-                                    Send Message
+                                <button type="submit" disabled={submitting} className="btn btn-primary w-full md:w-auto px-8 flex items-center justify-center gap-2 disabled:opacity-60">
+                                    {submitting ? (
+                                        <><Loader className="animate-spin" size={18} /> Sending...</>
+                                    ) : (
+                                        <>Send Message <ArrowRight size={18} /></>
+                                    )}
                                 </button>
 
                                 <p className="text-xs text-slate-500 mt-4 max-w-md">

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import {
     Stethoscope,
     Cpu,
@@ -18,56 +19,54 @@ import {
     ClipboardList, // Added
     PenTool, // Added
     Settings, // Added
-    Rocket // Added
+    Rocket, // Added
+    Loader
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SectionTitle from '../components/SectionTitle';
 
+const iconMap = {
+    'Medical Equipment Supply': Stethoscope,
+    'Installation & Commissioning': Settings,
+    'Maintenance & Repair': Wrench,
+    'Training & Support': Users,
+    'Consulting Services': Activity,
+};
+
 const Services = () => {
-    const services = [
-        {
-            id: 'medical-equipment',
-            title: 'Medical Equipment Supply',
-            icon: Stethoscope,
-            desc: 'End-to-end procurement and installation of accessible, high-performance diagnostic and therapeutic technology.',
-            features: ['Diagnostic Imaging (MRI, CT)', 'Critical Care Units', 'Surgical Theaters', 'Life Support Systems']
-        },
-        {
-            id: 'healthcare-it',
-            title: 'Healthcare IT Solutions',
-            icon: Cpu,
-            desc: 'Digital transformation infrastructure including HIS, PACS, and interoperable data ecosystems for seamless clinical workflows.',
-            features: ['Hospital Information Systems', 'Enterprise PACS/RIS', 'Telemedicine Infrastructure', 'Data Security Protocols']
-        },
-        {
-            id: 'infrastructure',
-            title: 'Hospital Infrastructure',
-            icon: Building2,
-            desc: 'Turnkey project management for clinical facilities, from architectural consulting to specialized medical gas pipeline systems.',
-            features: ['Modular OT Setup', 'Medical Gas Pipelines', 'CSSD Planning', 'Facility Engineering']
-        },
-        {
-            id: 'diagnostics',
-            title: 'Diagnostic Systems',
-            icon: Microscope,
-            desc: 'Next-generation laboratory and imaging command centers designed for precision accuracy and high-throughput efficiency.',
-            features: ['Automated Lab Systems', 'Molecuar Diagnostics', 'Digital Pathology', 'Point-of-Care Testing']
-        },
-        {
-            id: 'support',
-            title: 'Maintenance & Support',
-            icon: Wrench,
-            desc: 'Comprehensive lifecycle management with 24/7 technical rapid-response teams and preventive maintenance protocols.',
-            features: ['Annual Maintenance (AMC)', 'Calibration Services', 'Spare Parts Logistics', 'Emergency Repairs']
-        },
-        {
-            id: 'consulting',
-            title: 'Strategic Consulting',
-            icon: Activity,
-            desc: 'Operational optimization and technology capability capability assessments for maximizing institutional ROI.',
-            features: ['Technology Assessment', 'Workflow Optimization', 'Compliance Audits', 'Staff Training']
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchServices();
+    }, []);
+
+    const fetchServices = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await fetch('https://alliancehealthcare.anoopinnovations.com/api/v1/front/services');
+            const json = await res.json();
+            if (json.success && json.data) {
+                const mapped = json.data.map(p => ({
+                    id: p.slug,
+                    slug: p.slug,
+                    title: p.title,
+                    icon: iconMap[p.title] || ShieldCheck,
+                    desc: p.short_desc,
+                    features: p.key_features || [],
+                }));
+                setServices(mapped);
+            } else {
+                setError('Failed to load services.');
+            }
+        } catch (err) {
+            setError('Failed to load services. Please try again later.');
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
     const industries = [
         { title: 'Hospitals & Trauma Centers', icon: Building2, desc: 'Integrated critical care and surgical solutions.' },
@@ -254,37 +253,59 @@ const Services = () => {
                 <div className="container mx-auto px-4">
                     <SectionTitle title="Core Capabilities" subtitle="Holistic Solutions" />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-                        {services.map((service, idx) => (
-                            <motion.div
-                                key={service.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: idx * 0.1 }}
-                                className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-slate-100 group"
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center py-32 bg-white rounded-[2rem] border-2 border-dashed border-slate-200 mt-16">
+                            <Loader className="animate-spin text-accent mb-6" size={48} />
+                            <h3 className="text-2xl font-bold text-primary uppercase">Loading Services</h3>
+                            <p className="text-slate-500 font-medium text-sm mt-2">Please wait...</p>
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-32 bg-white rounded-[2rem] border-2 border-dashed border-slate-200 mt-16">
+                            <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center text-red-400 mx-auto mb-6">
+                                <ShieldCheck size={40} />
+                            </div>
+                            <h3 className="text-2xl font-bold text-primary uppercase">Unable to Load Services</h3>
+                            <p className="text-slate-500 font-medium text-sm mt-4 mb-8">{error}</p>
+                            <button
+                                onClick={fetchServices}
+                                className="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all uppercase text-xs tracking-widest"
                             >
-                                <div className="w-16 h-16 bg-accent/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-colors duration-500 text-accent">
-                                    <service.icon size={32} />
-                                </div>
-                                <h3 className="text-2xl font-bold text-primary mb-4">{service.title}</h3>
-                                <p className="text-slate-600 mb-8 leading-relaxed text-sm">
-                                    {service.desc}
-                                </p>
-                                <div className="space-y-3 mb-8">
-                                    {service.features.map((feature, f) => (
-                                        <div key={f} className="flex items-center gap-2 text-sm text-slate-500 font-medium">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-accent/40" />
-                                            {feature}
-                                        </div>
-                                    ))}
-                                </div>
-                                <Link to={`/services/${service.id}`} className="text-accent font-bold text-sm tracking-wide uppercase flex items-center gap-2 group-hover:gap-4 transition-all">
-                                    Learn More <ArrowRight size={16} />
-                                </Link>
-                            </motion.div>
-                        ))}
-                    </div>
+                                Try Again
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+                            {services.map((service, idx) => (
+                                <motion.div
+                                    key={service.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-slate-100 group"
+                                >
+                                    <div className="w-16 h-16 bg-accent/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-white transition-colors duration-500 text-accent">
+                                        <service.icon size={32} />
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-primary mb-4">{service.title}</h3>
+                                    <p className="text-slate-600 mb-8 leading-relaxed text-sm">
+                                        {service.desc}
+                                    </p>
+                                    <div className="space-y-3 mb-8">
+                                        {service.features.map((feature, f) => (
+                                            <div key={f} className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-accent/40" />
+                                                {feature}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <Link to={`/services/${service.slug}`} className="text-accent font-bold text-sm tracking-wide uppercase flex items-center gap-2 group-hover:gap-4 transition-all">
+                                        Learn More <ArrowRight size={16} />
+                                    </Link>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 

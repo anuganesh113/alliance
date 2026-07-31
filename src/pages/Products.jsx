@@ -4,25 +4,108 @@ import { Link } from 'react-router-dom';
 import {
     Search,
     ChevronRight,
-    Filter,
     ShieldCheck,
     Zap,
     Activity,
     Microscope,
     Cpu,
     CheckCircle2,
-    Award,
     Building2,
-    ArrowRight
+    ArrowRight,
+    Loader
 } from 'lucide-react';
+
+const API_BASE = 'https://alliancehealthcare.anoopinnovations.com/api/v1/front/products';
+
+const iconOptions = [Microscope, Activity, Cpu, Zap, ShieldCheck, Activity, ShieldCheck, Microscope];
+
+const productImages = [
+    "https://images.unsplash.com/photo-1516549655169-df83a0a60427?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1551884170-09fb70a3a2ed?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1530432999454-015a31a5eb23?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&q=80&w=800"
+];
+
+const categoryKeywords = {
+    'x-ray': 'Diagnostic Equipment',
+    'digital x-ray': 'Diagnostic Equipment',
+    'ultrasound': 'Diagnostic Equipment',
+    'ecg': 'Medical Devices',
+    'ventilator': 'Medical Devices',
+    'patient monitor': 'Monitoring & Imaging',
+    'infusion pump': 'Medical Devices',
+    'defibrillator': 'Medical Devices',
+    'surgical microscope': 'Diagnostic Equipment',
+    'anesthesia': 'Medical Devices',
+    'centrifuge': 'Laboratory Systems',
+    'autoclave': 'Laboratory Systems',
+    'sterilizer': 'Laboratory Systems',
+    'blood gas': 'Laboratory Systems',
+};
+
+const assignCategory = (name) => {
+    const lower = name.toLowerCase();
+    for (const [key, value] of Object.entries(categoryKeywords)) {
+        if (lower.includes(key)) return value;
+    }
+    return 'Medical Devices';
+};
 
 const Products = () => {
     const [activeCategory, setActiveCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        fetchProducts();
     }, []);
+
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            let allProducts = [];
+            let page = 1;
+            let hasMore = true;
+
+            while (hasMore) {
+                const res = await fetch(`${API_BASE}?per_page=12&page=${page}`);
+                const json = await res.json();
+                if (json.success && json.data) {
+                    allProducts = [...allProducts, ...json.data];
+                    hasMore = json.pagination?.has_more_pages || false;
+                    page++;
+                } else {
+                    break;
+                }
+            }
+
+            const mapped = allProducts.map((p, i) => ({
+                id: p.id,
+                slug: p.slug,
+                name: p.product_name,
+                category: p.category || assignCategory(p.product_name),
+                image: p.image || productImages[i % productImages.length],
+                shortDesc: p.short_desc,
+                highlight: p.specifications?.[0]?.details || 'Advanced Technology',
+                icon: iconOptions[i % iconOptions.length],
+                tag: p.new_arrival ? 'New' : null,
+            }));
+
+            setProducts(mapped);
+        } catch (err) {
+            setError('Failed to load products. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const categories = [
         'All',
@@ -36,90 +119,6 @@ const Products = () => {
 
     const brands = [
         'PENLON', 'PHILIPS', 'GE HEALTHCARE', 'SIEMENS', 'MINDRAY'
-    ];
-
-    const products = [
-        {
-            id: 1,
-            name: "Alliance MR-3T High-Field Scanner",
-            category: "Diagnostic Equipment",
-            image: "https://images.unsplash.com/photo-1516549655169-df83a0a60427?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Advanced 3 Tesla magnetic resonance imaging system for high-resolution diagnostics.",
-            highlight: "Ultra-High Resolution",
-            icon: Microscope,
-            tag: "Advanced"
-        },
-        {
-            id: 2,
-            name: "VitaCare ICU Ventilator Pro",
-            category: "Medical Devices",
-            image: "https://images.unsplash.com/photo-1551884170-09fb70a3a2ed?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Comprehensive respiratory support for critical care environments and ICUs.",
-            highlight: "Adaptive Lung Protection",
-            icon: Activity,
-            tag: "Popular"
-        },
-        {
-            id: 3,
-            name: "OmniNet Enterprise PACS",
-            category: "Healthcare IT Solutions",
-            image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Scalable picture archiving and communication system for enterprise-wide imaging.",
-            highlight: "Zero-Footprint Viewer",
-            icon: Cpu,
-            tag: "New"
-        },
-        // ... (keeping the rest of the products consistent with original)
-        {
-            id: 4,
-            name: "AutoLab BioAnalyzer 5000",
-            category: "Laboratory Systems",
-            image: "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "High-throughput biochemistry analysis workstation for clinical laboratories.",
-            highlight: "800 Tests/Hour",
-            icon: Zap,
-            tag: null
-        },
-        {
-            id: 5,
-            name: "ModuCare Modular OT",
-            category: "Hospital Infrastructure",
-            image: "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Antibacterial, seamless steel panel operating theaters for surgical excellence.",
-            highlight: "Class 100 Cleanroom",
-            icon: ShieldCheck,
-            tag: null
-        },
-        {
-            id: 6,
-            name: "AeroSense Patient Monitor",
-            category: "Monitoring & Imaging",
-            image: "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Continuous multi-parameter vital signs monitoring for ward and ICU patient care.",
-            highlight: "Wireless Telemetry",
-            icon: Activity,
-            tag: "Popular"
-        },
-        {
-            id: 7,
-            name: "Lumina 128-Slice CT Scanner",
-            category: "Diagnostic Equipment",
-            image: "https://images.unsplash.com/photo-1530432999454-015a31a5eb23?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Low-dose, high-speed computed tomography system for rapid diagnostic scanning.",
-            highlight: "AI Artifact Reduction",
-            icon: Microscope,
-            tag: null
-        },
-        {
-            id: 8,
-            name: "Alliance HIS Platform Architecture",
-            category: "Healthcare IT Solutions",
-            image: "https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&q=80&w=800",
-            shortDesc: "Integrated hospital management and billing software for clinic and enterprise needs.",
-            highlight: "HL7 Compliant",
-            icon: Cpu,
-            tag: "Enterprise"
-        }
     ];
 
     const filteredProducts = products.filter(p => {
@@ -242,7 +241,7 @@ const Products = () => {
                                     {activeCategory === 'All' ? 'All Solutions' : activeCategory}
                                 </h2>
                                 <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mt-1">
-                                    Found {filteredProducts.length} Results
+                                    {loading ? 'Loading...' : `Found ${filteredProducts.length} Results`}
                                 </p>
                             </div>
                             <div className="flex items-center gap-3 text-sm font-bold text-slate-400">
@@ -256,62 +255,88 @@ const Products = () => {
                         </div>
 
                         {/* Product Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                            <AnimatePresence mode="popLayout">
-                                {filteredProducts.map((product) => (
-                                    <motion.div
-                                        layout
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, scale: 0.9 }}
-                                        key={product.id}
-                                        className="group"
-                                    >
-                                        <Link to={`/products/${product.id}`} className="block bg-white border-2 border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-secondary transition-all duration-300">
-                                            {/* Image container */}
-                                            <div className="aspect-[4/3] relative overflow-hidden bg-slate-50 p-6 flex items-center justify-center">
-                                                <img
-                                                    src={product.image}
-                                                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
-                                                    alt={product.name}
-                                                />
-                                                {product.tag && (
-                                                    <div className="absolute top-4 left-4 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
-                                                        {product.tag}
-                                                    </div>
-                                                )}
-                                                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300" />
-                                            </div>
-
-                                            {/* Content container */}
-                                            <div className="p-6 space-y-4">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{product.category}</span>
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                                <Loader className="animate-spin text-secondary mb-6" size={48} />
+                                <h3 className="text-2xl font-black text-primary uppercase">Loading Products</h3>
+                                <p className="text-slate-500 font-bold text-sm mt-2">
+                                    Please wait while we fetch the latest products...
+                                </p>
+                            </div>
+                        ) : error ? (
+                            <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                                <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center text-red-400 mx-auto mb-6">
+                                    <Search size={40} />
+                                </div>
+                                <h3 className="text-2xl font-black text-primary uppercase">Something Went Wrong</h3>
+                                <p className="text-slate-500 font-bold text-sm mt-2">
+                                    {error}
+                                </p>
+                                <button
+                                    onClick={fetchProducts}
+                                    className="mt-8 px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all uppercase text-xs tracking-widest"
+                                >
+                                    Try Again
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                                <AnimatePresence mode="popLayout">
+                                    {filteredProducts.map((product) => (
+                                        <motion.div
+                                            layout
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
+                                            key={product.id}
+                                            className="group"
+                                        >
+                                            <Link to={`/products/${product.slug}`} className="block bg-white border-2 border-slate-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-secondary transition-all duration-300">
+                                                {/* Image container */}
+                                                <div className="aspect-[4/3] relative overflow-hidden bg-slate-50 p-6 flex items-center justify-center">
+                                                    <img
+                                                        src={product.image}
+                                                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+                                                        alt={product.name}
+                                                    />
+                                                    {product.tag && (
+                                                        <div className="absolute top-4 left-4 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
+                                                            {product.tag}
+                                                        </div>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300" />
                                                 </div>
-                                                <h3 className="text-lg font-black text-primary leading-tight uppercase group-hover:text-secondary transition-colors line-clamp-2 min-h-[3.5rem]">
-                                                    {product.name}
-                                                </h3>
-                                                <p className="text-slate-500 text-xs font-medium leading-relaxed line-clamp-3">
-                                                    {product.shortDesc}
-                                                </p>
 
-                                                <div className="pt-4 flex items-center justify-between border-t border-slate-50">
-                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                                                        <CheckCircle2 size={14} className="text-secondary" />
-                                                        Technical Specs
-                                                    </span>
-                                                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-primary group-hover:bg-secondary group-hover:text-white transition-all transform group-hover:translate-x-1">
-                                                        <ChevronRight size={18} />
+                                                {/* Content container */}
+                                                <div className="p-6 space-y-4">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{product.category}</span>
+                                                    </div>
+                                                    <h3 className="text-lg font-black text-primary leading-tight uppercase group-hover:text-secondary transition-colors line-clamp-2 min-h-[3.5rem]">
+                                                        {product.name}
+                                                    </h3>
+                                                    <p className="text-slate-500 text-xs font-medium leading-relaxed line-clamp-3">
+                                                        {product.shortDesc}
+                                                    </p>
+
+                                                    <div className="pt-4 flex items-center justify-between border-t border-slate-50">
+                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                            <CheckCircle2 size={14} className="text-secondary" />
+                                                            Technical Specs
+                                                        </span>
+                                                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-primary group-hover:bg-secondary group-hover:text-white transition-all transform group-hover:translate-x-1">
+                                                            <ChevronRight size={18} />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
-                        </div>
+                                            </Link>
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+                        )}
 
-                        {filteredProducts.length === 0 && (
+                        {!loading && !error && filteredProducts.length === 0 && (
                             <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
                                 <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-6">
                                     <Search size={40} />

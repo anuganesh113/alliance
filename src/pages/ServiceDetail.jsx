@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -15,123 +15,91 @@ import {
     Zap,
     Users,
     Clock,
-    Award
+    Award,
+    Settings,
+    Loader
 } from 'lucide-react';
 
-const serviceData = {
-    'medical-equipment': {
-        title: 'Medical Equipment Supply',
-        icon: Stethoscope,
-        tagline: 'Precision diagnostic and therapeutic technology.',
-        longDesc: 'Our medical equipment supply segment focuses on bridging the gap between cutting-edge technology and clinical accessibility. We partner with world-renowned manufacturers to deliver high-performance diagnostic imaging, life support systems, and specialized therapeutic units that clinicians rely on to save lives.',
-        color: 'text-accent',
-        bgColor: 'bg-accent/10',
-        features: [
-            { title: 'Diagnostic Imaging', desc: 'Advanced MRI, CT, and X-Ray systems for precise diagnostics.' },
-            { title: 'Critical Care Units', desc: 'Complete ICU/NICU setups including ventilators and monitors.' },
-            { title: 'Surgical Theaters', desc: 'Next-gen surgical lights, tables, and cautery systems.' },
-            { title: 'Life Support', desc: 'Robust anesthesia machines and emergency resuscitation gear.' }
-        ],
-        benefits: ['Factory-Authorized Calibration', 'Extended Warranty Programs', 'Application Specialist Support'],
-        image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=1000'
-    },
-    'healthcare-it': {
-        title: 'Healthcare IT Solutions',
-        icon: Cpu,
-        tagline: 'Digital-first clinical ecosystems.',
-        longDesc: 'Digital transformation is no longer optional. Our IT solutions provide the neurological system for modern hospitals—seamlessly connecting data, clinicians, and patients. We implement interoperable ecosystems that prioritize data security while maximizing operational throughput.',
-        color: 'text-blue-400',
-        bgColor: 'bg-blue-400/10',
-        features: [
-            { title: 'Enterprise HIS', desc: 'Comprehensive Hospital Information Systems for 360° management.' },
-            { title: 'PACS/RIS', desc: 'High-speed imaging storage and retrieval protocols.' },
-            { title: 'Telemedicine', desc: 'Low-latency remote consultation and monitoring platforms.' },
-            { title: 'Data Security', desc: 'Industrial-grade encryption and HIPAA-compliant architecture.' }
-        ],
-        benefits: ['Cloud & On-Premise Stability', 'Seamless API Integration', '24/7 Cybersecurity Monitoring'],
-        image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1000'
-    },
-    'infrastructure': {
-        title: 'Hospital Infrastructure',
-        icon: Building2,
-        tagline: 'Turnkey clinical facility engineering.',
-        longDesc: 'From greenfield projects to specialized facility upgrades, we provide end-to-end design and engineering services. Our expertise in modular OT construction and medical gas pipeline systems (MGPS) ensures that your facility is non only functional but optimized for patient safety and clinical flow.',
-        color: 'text-purple-400',
-        bgColor: 'bg-purple-400/10',
-        features: [
-            { title: 'Modular OT', desc: 'State-of-the-art sterile environments with integrated controls.' },
-            { title: 'Medical Gas Systems', desc: 'High-integrity pipeline networks for critical gas delivery.' },
-            { title: 'CSSD Planning', desc: 'Optimal sterilization workflows for surgical instrumentation.' },
-            { title: 'HVAC/Clean Room', desc: 'Specialized air filtration and pressure management for labs.' }
-        ],
-        benefits: ['Consulting-to-Commissioning', 'Regulatory Compliance Audits', 'Space-Optimization Design'],
-        image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1000'
-    },
-    'diagnostics': {
-        title: 'Diagnostic Systems',
-        icon: Microscope,
-        tagline: 'Precision laboratory command centers.',
-        longDesc: 'Accelerate clinical decision-making with automated, high-throughput laboratory solutions. We design command centers that handle high sample volumes with zero margin for error, integrating molecular diagnostics and digital pathology into a unified workflow.',
-        color: 'text-orange-400',
-        bgColor: 'bg-orange-400/10',
-        features: [
-            { title: 'Automated Lab', desc: 'Robotic track systems for multi-modality sampling.' },
-            { title: 'Molecular DX', desc: 'High-precision PCR and sequencing infrastructure.' },
-            { title: 'Digital Pathology', desc: 'AI-assisted slide analysis and remote diagnostics.' },
-            { title: 'Point-of-Care', desc: 'Rapid, accurate bedside testing modalities.' }
-        ],
-        benefits: ['LIMS Interoperability', 'Maintenance of Reagent Chains', 'Expert Workflow Mapping'],
-        image: 'https://images.unsplash.com/photo-1579154273821-ad991fb9a565?auto=format&fit=crop&q=80&w=1000'
-    },
-    'support': {
-        title: 'Maintenance & Support',
-        icon: Wrench,
-        tagline: 'Life-cycle reliability and zero downtime.',
-        longDesc: 'Healthcare never stops, and neither do we. Our maintenance division is built on the premise of proactive prevention. With 24/7 technical rapid-response teams and factory-trained engineers, we ensure that your most critical assets are always operational when they matter most.',
-        color: 'text-emerald-400',
-        bgColor: 'bg-emerald-400/10',
-        features: [
-            { title: 'Annual Maintenance', desc: 'Structured preventive checkups to maximize uptime.' },
-            { title: 'Calibration', desc: 'Certified precision adjustments for diagnostic accuracy.' },
-            { title: 'Spare Parts', desc: 'Direct supply chain for high-integrity original components.' },
-            { title: 'Emergency Repair', desc: 'Technical rapid-response teams available round the clock.' }
-        ],
-        benefits: ['Guaranteed Response Times', 'Online Asset Tracking', 'Staff Capability Training'],
-        image: 'https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&q=80&w=1000'
-    },
-    'consulting': {
-        title: 'Strategic Consulting',
-        icon: Activity,
-        tagline: 'Operational intelligence and institutional ROI.',
-        longDesc: 'Data-driven insights to optimize your clinical operations. We provide capability assessments, technology lifecycle planning, and workflow audits that help medical institutions maximize their return on investment while elevating the standard of patient care.',
-        color: 'text-rose-400',
-        bgColor: 'bg-rose-400/10',
-        features: [
-            { title: 'Tech Assessment', desc: 'Objective audits of current infrastructure capabilities.' },
-            { title: 'Workflow Audit', desc: 'Identifying bottlenecks in patient and clinical flow.' },
-            { title: 'Feasibility', desc: 'In-depth market and financial modeling for new projects.' },
-            { title: 'Compliance', desc: 'Ensuring alignment with local and international standards.' }
-        ],
-        benefits: ['Unbiased Technology Review', 'Capital Budgeting Experts', 'Accreditation Preparedness'],
-        image: 'https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=1000'
-    }
+const API_BASE = 'https://alliancehealthcare.anoopinnovations.com/api/v1/front/services';
+
+const serviceStyles = {
+    'medical-equipment-supply': { icon: Stethoscope, color: 'text-accent', bgColor: 'bg-accent/10' },
+    'installation-commissioning': { icon: Settings, color: 'text-blue-400', bgColor: 'bg-blue-400/10' },
+    'maintenance-repair': { icon: Wrench, color: 'text-emerald-400', bgColor: 'bg-emerald-400/10' },
+    'training-support': { icon: Users, color: 'text-purple-400', bgColor: 'bg-purple-400/10' },
+    'consulting-services': { icon: Activity, color: 'text-rose-400', bgColor: 'bg-rose-400/10' },
 };
+
+const defaultStyle = { icon: ShieldCheck, color: 'text-accent', bgColor: 'bg-accent/10' };
 
 const ServiceDetail = () => {
     const { serviceId } = useParams();
-    const service = serviceData[serviceId];
+    const [service, setService] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         window.scrollTo(0, 0);
+        fetchService();
     }, [serviceId]);
 
-    if (!service) {
+    const fetchService = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await fetch(`${API_BASE}/${serviceId}`);
+            const json = await res.json();
+            if (json.success && json.data) {
+                const p = json.data;
+                const style = serviceStyles[p.slug] || defaultStyle;
+                const features = (p.key_features || []).map(kf => ({
+                    title: kf,
+                    desc: '',
+                }));
+                setService({
+                    title: p.title,
+                    icon: style.icon,
+                    tagline: p.short_desc,
+                    longDesc: p.content,
+                    color: style.color,
+                    bgColor: style.bgColor,
+                    features,
+                    benefits: p.key_features || [],
+                    image: p.image,
+                });
+            } else {
+                setError('Service not found.');
+            }
+        } catch (err) {
+            setError('Failed to load service details. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
         return (
-            <div className="py-32 text-center text-primary text-2xl font-bold bg-white h-screen">
-                Service not found
-                <div className="mt-8">
-                    <Link to="/services" className="btn btn-primary px-8 py-3 rounded-full">Back to Services</Link>
+            <div className="bg-white text-slate-900 min-h-screen font-sans flex items-center justify-center">
+                <div className="text-center space-y-6">
+                    <Loader className="animate-spin text-accent mx-auto" size={48} />
+                    <h3 className="text-2xl font-black text-primary uppercase">Loading Service</h3>
+                    <p className="text-slate-500 font-bold text-sm">Please wait...</p>
                 </div>
+            </div>
+        );
+    }
+
+    if (error || !service) {
+        return (
+            <div className="bg-white text-slate-900 min-h-screen font-sans flex flex-col items-center justify-center space-y-6">
+                <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center text-red-400 mx-auto">
+                    <ShieldCheck size={40} />
+                </div>
+                <h3 className="text-2xl font-black text-primary uppercase">Service Not Found</h3>
+                <p className="text-slate-500 font-bold text-sm">{error || 'The requested service does not exist.'}</p>
+                <Link to="/services" className="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all uppercase text-xs tracking-widest">
+                    Back to Services
+                </Link>
             </div>
         );
     }
@@ -183,14 +151,13 @@ const ServiceDetail = () => {
                                 </span>
                             </motion.h1>
 
-                            <motion.p
+                            <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
-                                className="text-xl text-slate-600 font-light leading-relaxed max-w-2xl"
-                            >
-                                {service.longDesc}
-                            </motion.p>
+                                className="text-xl text-slate-600 font-light leading-relaxed max-w-2xl [&_p]:mb-4"
+                                dangerouslySetInnerHTML={{ __html: service.longDesc }}
+                            />
                         </div>
 
                         <motion.div
@@ -233,7 +200,9 @@ const ServiceDetail = () => {
                                     <CheckCircle2 size={24} />
                                 </div>
                                 <h3 className="text-xl font-bold mb-3 text-primary">{feature.title}</h3>
-                                <p className="text-slate-500 text-sm leading-relaxed">{feature.desc}</p>
+                                {feature.desc && (
+                                    <p className="text-slate-500 text-sm leading-relaxed">{feature.desc}</p>
+                                )}
                             </motion.div>
                         ))}
                     </div>
